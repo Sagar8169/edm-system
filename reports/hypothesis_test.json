@@ -1,0 +1,10 @@
+{
+  "test": "McNemar's Test",
+  "statistic": 349.1150121065375,
+  "p_value": 0.0,
+  "baseline_only_correct": 144,
+  "xgb_only_correct": 682,
+  "significant_at_005": true,
+  "significant_at_001": true,
+  "interpretation": "XGBoost corrected 682 errors that baseline missed, while baseline corrected 144 errors that XGBoost missed. The difference IS statistically significant at \u03b1=0.05 (p=0.0000)."
+}

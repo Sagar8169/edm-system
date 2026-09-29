@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Based Educational Data Mining Performance Recognition System — Identify at-risk students with explainable ML predictions, HITL overrides, and algorithmic fairness monitoring.">
+    <title>EDM Performance Recognition System — AI-Powered Student Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <span class="spinner-text">Connecting to EDM Backend...</span>
+        </div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation (Matching Streamlit Multi-Page Architecture) -->
+        <aside class="app-sidebar" id="app-sidebar">
+            <div class="sidebar-brand-wrapper">
+                <div class="sidebar-brand">
+                    <span class="brand-emoji">🎓</span>
+                    <div class="brand-info">
+                        <span class="brand-title">EDM<span class="brand-accent">System</span></span>
+                        <span class="brand-subtitle">AI Performance Recognition</span>
+                    </div>
+                </div>
+                <button class="sidebar-close-btn" id="sidebar-close-btn" title="Close sidebar">✕</button>
+            </div>
+
+            <div class="sidebar-menu-wrapper">
+                <div class="sidebar-menu-label">Pages</div>
+                <nav class="sidebar-nav" id="sidebar-nav">
+                    <a href="#/home" class="sidebar-nav-item active" data-page="home">
+                        <span class="nav-icon">🎓</span>
+                        <span class="nav-text">Student Development</span>
+                    </a>
+                    <a href="#/overview" class="sidebar-nav-item" data-page="overview">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="#/student-list" class="sidebar-nav-item" data-page="student-list">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Student List</span>
+                    </a>
+                    <a href="#/student-detail" class="sidebar-nav-item" data-page="student-detail">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">Student Detail</span>
+                    </a>
+                    <a href="#/report" class="sidebar-nav-item" data-page="report">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">Report</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="connection-indicator disconnected" id="connection-status" title="Checking connection...">
+                    <span class="conn-dot"></span> Connecting
+                </div>
+                <button class="btn-icon" id="theme-toggle" title="Toggle theme">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area with Distinct Page Views -->
+        <div class="app-main-wrapper">
+            <!-- Mobile Top Bar -->
+            <header class="app-topbar">
+                <button class="topbar-toggle-btn" id="mobile-menu-btn" title="Open navigation">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topbar-title-wrapper" id="topbar-title">
+                    <span class="topbar-icon">🎓</span>
+                    <span class="topbar-heading">Student Development</span>
+                </div>
+                <div class="topbar-status">
+                    <span class="topbar-dot" id="topbar-dot"></span>
+                </div>
+            </header>
+
+            <main class="app-main" id="app-main">
+                <!-- ============================================================
+                     PAGE 1: STUDENT DEVELOPMENT (HOME)
+                     ============================================================ -->
+                <div class="page-view active" id="page-home" data-page="home">
+                    <header class="hero" id="hero">
+                        <div class="hero-content">
+                            <div class="hero-badge">
+                                <span class="badge-dot"></span>
+                                AI-Powered Educational Data Mining
+                            </div>
+                            <h1 class="hero-title">
+                                🎓 AI-Based EDM <span class="gradient-text">Performance Recognition</span> System
+                            </h1>
+                            <p class="hero-subtitle">
+                                Welcome to the <strong>Human-in-the-Loop Machine Learning Dashboard</strong> for educational data mining.
+                                This system identifies <strong>at-risk students</strong> using engagement and assessment data, provides
+                                <strong>explainable predictions</strong> via SHAP, and enables <strong>teacher overrides</strong> for human-in-the-loop
+                                correction.
+                            </p>
+                            
+                            <!-- Quick Start Cards (Matching Streamlit Landing Page) -->
+                            <div class="quick-start-section">
+                                <h3 class="quick-start-heading">⚡ Quick Start — Explore System Pages</h3>
+                                <div class="quick-start-grid">
+                                    <div class="quick-start-card" onclick="navigateTo('overview')">
+                                        <div class="qs-header">
+                                            <span class="qs-icon">📊</span>
+                                            <h4 class="qs-title">Dashboard</h4>
+                                        </div>
+                                        <p class="qs-desc">Class-wide statistics and XGBoost model performance metrics.</p>
+                                        <span class="qs-link">Open Page →</span>
+                                    </div>
+                                    <div class="quick-start-card" onclick="navigateTo('student-list')">
+                                        <div class="qs-header">
+                                            <span class="qs-icon">📋</span>
+                                            <h4 class="qs-title">Student List</h4>
+                                        </div>
+                                        <p class="qs-desc">Searchable table of all students with risk predictions & filters.</p>
+                                        <span class="qs-link">Open Page →</span>
+                                    </div>
+                                    <div class="quick-start-card" onclick="navigateTo('student-detail')">
+                                        <div class="qs-header">
+                                            <span class="qs-icon">🔍</span>
+                                            <h4 class="qs-title">Student Detail</h4>
+                                        </div>
+                                        <p class="qs-desc">Individual SHAP waterfall explanations & teacher HITL overrides.</p>
+                                        <span class="qs-link">Open Page →</span>
+                                    </div>
+
+                                    <div class="quick-start-card" onclick="navigateTo('report')">
+                                        <div class="qs-header">
+                                            <span class="qs-icon">📝</span>
+                                            <h4 class="qs-title">Report</h4>
+                                        </div>
+                                        <p class="qs-desc">Complete KPI summary, McNemar hypothesis test & data exports.</p>
+                                        <span class="qs-link">Open Page →</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hero-stats">
+                                <div class="hero-stat" id="stat-students">
+                                    <span class="stat-number" data-target="32593">0</span>
+                                    <span class="stat-label">Students Analyzed</span>
+                                </div>
+                                <div class="hero-stat" id="stat-accuracy">
+                                    <span class="stat-number" data-target="93.1" data-suffix="%">0%</span>
+                                    <span class="stat-label">Model Accuracy</span>
+                                </div>
+                                <div class="hero-stat" id="stat-features">
+                                    <span class="stat-number" data-target="25">0</span>
+                                    <span class="stat-label">ML Features</span>
+                                </div>
+                                <div class="hero-stat" id="stat-fairness">
+                                    <span class="stat-number" data-target="0.91" data-prefix="" data-decimals="2">0</span>
+                                    <span class="stat-label">Fairness Index (AFI)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hero-visual">
+                            <div class="neural-network" id="neural-net"></div>
+                        </div>
+                    </header>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 2: OVERVIEW
+                     ============================================================ -->
+                <div class="page-view" id="page-overview" data-page="overview">
+                    <section class="section" id="overview">
+                        <div class="section-header">
+                            <span class="section-tag">📊 System Dashboard</span>
+                            <h2 class="section-title">Class-Wide Statistics & Performance</h2>
+                            <p class="section-desc">Class-wide statistics, model performance metrics, and key risk indicators at a glance.</p>
+                        </div>
+
+                        <!-- KPI Cards -->
+                        <div class="kpi-grid">
+                            <div class="kpi-card kpi-primary">
+                                <div class="kpi-icon">👥</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="kpi-total">32,593</span>
+                                    <span class="kpi-label">Total Students</span>
+                                </div>
+                                <div class="kpi-trend kpi-trend-up">Full Cohort</div>
+                            </div>
+                            <div class="kpi-card kpi-danger">
+                                <div class="kpi-icon">⚠️</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="kpi-atrisk">12,841</span>
+                                    <span class="kpi-label">At-Risk Students</span>
+                                </div>
+                                <div class="kpi-trend kpi-trend-down">39.4% of total</div>
+                            </div>
+                            <div class="kpi-card kpi-success">
+                                <div class="kpi-icon">✅</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="kpi-safe">19,752</span>
+                                    <span class="kpi-label">Not At Risk</span>
+                                </div>
+                                <div class="kpi-trend kpi-trend-up">60.6% on track</div>
+                            </div>
+                            <div class="kpi-card kpi-info">
+                                <div class="kpi-icon">🎓</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value">7</span>
+                                    <span class="kpi-label">Modules Tracked</span>
+                                </div>
+                                <div class="kpi-trend">OULAD Dataset</div>
+                            </div>
+                        </div>
+
+                        <!-- Model Performance Cards -->
+                        <div class="sub-section-title">🤖 Model Performance (XGBoost)</div>
+                        <div class="model-perf-grid">
+                            <div class="perf-card">
+                                <div class="perf-ring" data-value="93.1" data-color="#667eea">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                                        <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-accuracy"/>
+                                    </svg>
+                                    <span class="ring-label">93.1%</span>
+                                </div>
+                                <span class="perf-name">Accuracy</span>
+                            </div>
+                            <div class="perf-card">
+                                <div class="perf-ring" data-value="96.6" data-color="#2ecc71">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                                        <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-precision"/>
+                                    </svg>
+                                    <span class="ring-label">96.6%</span>
+                                </div>
+                                <span class="perf-name">Precision</span>
+                            </div>
+                            <div class="perf-card">
+                                <div class="perf-ring" data-value="90.1" data-color="#e74c3c">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                                        <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-recall"/>
+                                    </svg>
+                                    <span class="ring-label">90.1%</span>
+                                </div>
+                                <span class="perf-name">Recall</span>
+                            </div>
+                            <div class="perf-card">
+                                <div class="perf-ring" data-value="93.2" data-color="#f39c12">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                                        <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-f1"/>
+                                    </svg>
+                                    <span class="ring-label">93.2%</span>
+                                </div>
+                                <span class="perf-name">F1 Score</span>
+                            </div>
+                            <div class="perf-card">
+                                <div class="perf-ring" data-value="97.9" data-color="#764ba2">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle cx="60" cy="60" r="52" class="ring-bg"/>
+                                        <circle cx="60" cy="60" r="52" class="ring-fill" id="ring-roc"/>
+                                    </svg>
+                                    <span class="ring-label">97.9%</span>
+                                </div>
+                                <span class="perf-name">ROC-AUC</span>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="charts-grid">
+                            <div class="chart-card">
+                                <h3 class="chart-title">Class Distribution</h3>
+                                <canvas id="chart-distribution" width="400" height="280"></canvas>
+                            </div>
+                            <div class="chart-card">
+                                <h3 class="chart-title">Model Comparison: XGBoost vs Baseline</h3>
+                                <canvas id="chart-comparison" width="400" height="280"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Feature Importance -->
+                        <div class="chart-card chart-full">
+                            <h3 class="chart-title">🔑 Top Feature Importance (SHAP)</h3>
+                            <p class="chart-subtitle">Ranked by mean absolute SHAP value impact on risk classification.</p>
+                            <div class="feature-bars" id="feature-bars"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 3: STUDENT LIST
+                     ============================================================ -->
+                <div class="page-view" id="page-student-list" data-page="student-list">
+                    <section class="section" id="students">
+                        <div class="section-header">
+                            <span class="section-tag">📋 Student Registry</span>
+                            <h2 class="section-title">Searchable Student Risk Directory</h2>
+                            <p class="section-desc">Search, filter, and inspect students by risk score. Click any row or the View button to inspect their SHAP explanation.</p>
+                        </div>
+
+                        <!-- Filters Bar -->
+                        <div class="filters-bar">
+                            <div class="search-box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                                <input type="text" id="search-input" placeholder="Search by Student ID...">
+                            </div>
+                            <div class="filter-group">
+                                <select id="filter-risk" class="filter-select">
+                                    <option value="all">All Risk Levels</option>
+                                    <option value="critical">🔴 Critical (≥ 0.7)</option>
+                                    <option value="high">🟠 High (0.5 – 0.7)</option>
+                                    <option value="medium">🟡 Medium (0.3 – 0.5)</option>
+                                    <option value="low">🟢 Low (&lt; 0.3)</option>
+                                </select>
+                                <select id="filter-cluster" class="filter-select">
+                                    <option value="all">All Clusters</option>
+                                    <option value="0">C0: High Engagement</option>
+                                    <option value="1">C1: Low Engagement</option>
+                                    <option value="2">C2: Inconsistent</option>
+                                    <option value="3">C3: High Effort, Low Score</option>
+                                </select>
+                            </div>
+                            <button class="btn-secondary" id="export-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                                Export CSV
+                            </button>
+                        </div>
+
+                        <!-- Student Table -->
+                        <div class="table-container">
+                            <table class="data-table" id="student-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="id">Student ID <span class="sort-icon">↕</span></th>
+                                        <th data-sort="module">Module</th>
+                                        <th data-sort="risk">Risk Score <span class="sort-icon">↕</span></th>
+                                        <th data-sort="status">Status</th>
+                                        <th data-sort="clicks">Total Clicks</th>
+                                        <th data-sort="score">Avg Score</th>
+                                        <th data-sort="days">Days Active</th>
+                                        <th data-sort="cluster">Cluster</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="student-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination" id="pagination"></div>
+                    </section>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 4: STUDENT DETAIL (EXPLAINABILITY & HITL)
+                     ============================================================ -->
+                <div class="page-view" id="page-student-detail" data-page="student-detail">
+                    <section class="section" id="explainability">
+                        <div class="section-header">
+                            <span class="section-tag">🔍 Student Detail</span>
+                            <h2 class="section-title">Individual SHAP Explanations & Teacher Overrides</h2>
+                            <p class="section-desc">Inspect exact risk drivers and protective factors for any student, with full Human-in-the-Loop teacher override controls.</p>
+                        </div>
+
+                        <div class="xai-layout">
+                            <!-- Student Selector & Profile -->
+                            <div class="xai-sidebar">
+                                <div class="student-selector">
+                                    <label for="xai-student-select">Select Student</label>
+                                    <select id="xai-student-select" class="filter-select"></select>
+                                </div>
+
+                                <div class="student-profile-card" id="xai-profile">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar" id="xai-avatar">?</div>
+                                        <div class="profile-info">
+                                            <span class="profile-id" id="xai-student-id">—</span>
+                                            <span class="profile-module" id="xai-module">—</span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-metrics">
+                                        <div class="profile-metric">
+                                            <span class="pm-label">Risk Score</span>
+                                            <span class="pm-value" id="xai-risk-score">—</span>
+                                        </div>
+                                        <div class="profile-metric">
+                                            <span class="pm-label">Prediction</span>
+                                            <span class="pm-value" id="xai-prediction">—</span>
+                                        </div>
+                                        <div class="profile-metric">
+                                            <span class="pm-label">Actual Result</span>
+                                            <span class="pm-value" id="xai-actual">—</span>
+                                        </div>
+                                        <div class="profile-metric">
+                                            <span class="pm-label">Cluster</span>
+                                            <span class="pm-value" id="xai-cluster">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- HITL Teacher Override -->
+                                <div class="hitl-panel">
+                                    <h4>🧑‍🏫 Teacher Override (HITL)</h4>
+                                    <p class="hitl-subtitle">Expert educators can validate or adjust AI predictions.</p>
+                                    <textarea id="hitl-notes" placeholder="Teacher pedagogical notes (optional)..." rows="3"></textarea>
+                                    <div class="hitl-buttons">
+                                        <button class="btn-danger" id="hitl-confirm">✅ Confirm Risk</button>
+                                        <button class="btn-success" id="hitl-override">❌ Override to Safe</button>
+                                    </div>
+                                    <div class="hitl-feedback" id="hitl-feedback"></div>
+                                </div>
+                            </div>
+
+                            <!-- SHAP Visualization & Insights -->
+                            <div class="xai-main">
+                                <div class="chart-card">
+                                    <h3 class="chart-title">SHAP Waterfall — Feature Contributions</h3>
+                                    <p class="chart-subtitle">Red bars push prediction toward "At Risk". Green bars reduce risk.</p>
+                                    <div class="shap-waterfall" id="shap-waterfall"></div>
+                                </div>
+
+                                <div class="xai-explanation-cards">
+                                    <div class="explanation-card risk-factors">
+                                        <h4>🔴 Key Risk Factors</h4>
+                                        <ul id="risk-factors-list"></ul>
+                                    </div>
+                                    <div class="explanation-card protective-factors">
+                                        <h4>🟢 Protective Factors</h4>
+                                        <ul id="protective-factors-list"></ul>
+                                    </div>
+                                </div>
+
+                                <!-- Recommended Intervention -->
+                                <div class="intervention-card" id="intervention-card">
+                                    <div class="intervention-header">
+                                        <span class="intervention-icon">🎯</span>
+                                        <h4>Recommended Pedagogical Intervention</h4>
+                                    </div>
+                                    <p class="intervention-text" id="intervention-text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 5: PERSONALIZATION
+                     ============================================================ -->
+                <div class="page-view" id="page-personalization" data-page="personalization">
+                    <section class="section" id="clusters">
+                        <div class="section-header">
+                            <span class="section-tag">🎯 Personalization</span>
+                            <h2 class="section-title">Cluster Archetypes & Interventions</h2>
+                            <p class="section-desc">Students are grouped by engagement and performance patterns. Each cluster maps to a tailored pedagogical intervention.</p>
+                        </div>
+
+                        <!-- Cluster Cards -->
+                        <div class="cluster-grid">
+                            <div class="cluster-card cluster-0">
+                                <div class="cluster-header">
+                                    <span class="cluster-number">C0</span>
+                                    <span class="cluster-badge badge-low">Low Risk</span>
+                                </div>
+                                <h3 class="cluster-title">High Engagement, High Performance</h3>
+                                <p class="cluster-desc">Consistently active learners achieving strong scores across assessments.</p>
+                                <div class="cluster-stats">
+                                    <div class="cs"><span class="cs-val" id="c0-count">—</span><span class="cs-label">Students</span></div>
+                                    <div class="cs"><span class="cs-val" id="c0-clicks">—</span><span class="cs-label">Avg Clicks</span></div>
+                                    <div class="cs"><span class="cs-val" id="c0-score">—</span><span class="cs-label">Avg Score</span></div>
+                                </div>
+                                <div class="cluster-intervention">
+                                    <strong>Intervention:</strong> Continue current path. Offer advanced enrichment resources. Consider peer mentoring roles.
+                                </div>
+                            </div>
+
+                            <div class="cluster-card cluster-1">
+                                <div class="cluster-header">
+                                    <span class="cluster-number">C1</span>
+                                    <span class="cluster-badge badge-critical">Critical</span>
+                                </div>
+                                <h3 class="cluster-title">Low Engagement, Declining</h3>
+                                <p class="cluster-desc">Minimal VLE interaction with below-average and worsening assessment scores.</p>
+                                <div class="cluster-stats">
+                                    <div class="cs"><span class="cs-val" id="c1-count">—</span><span class="cs-label">Students</span></div>
+                                    <div class="cs"><span class="cs-val" id="c1-clicks">—</span><span class="cs-label">Avg Clicks</span></div>
+                                    <div class="cs"><span class="cs-val" id="c1-score">—</span><span class="cs-label">Avg Score</span></div>
+                                </div>
+                                <div class="cluster-intervention">
+                                    <strong>Intervention:</strong> URGENT — Schedule 1-on-1 tutorial support. Provide structured study plans with weekly milestones.
+                                </div>
+                            </div>
+
+                            <div class="cluster-card cluster-2">
+                                <div class="cluster-header">
+                                    <span class="cluster-number">C2</span>
+                                    <span class="cluster-badge badge-medium">Medium</span>
+                                </div>
+                                <h3 class="cluster-title">Moderate, Inconsistent</h3>
+                                <p class="cluster-desc">Regular but not intensive engagement with high variance in performance.</p>
+                                <div class="cluster-stats">
+                                    <div class="cs"><span class="cs-val" id="c2-count">—</span><span class="cs-label">Students</span></div>
+                                    <div class="cs"><span class="cs-val" id="c2-clicks">—</span><span class="cs-label">Avg Clicks</span></div>
+                                    <div class="cs"><span class="cs-val" id="c2-score">—</span><span class="cs-label">Avg Score</span></div>
+                                </div>
+                                <div class="cluster-intervention">
+                                    <strong>Intervention:</strong> Targeted study skills workshop. Peer mentoring pairing. Formative self-assessment practice.
+                                </div>
+                            </div>
+
+                            <div class="cluster-card cluster-3">
+                                <div class="cluster-header">
+                                    <span class="cluster-number">C3</span>
+                                    <span class="cluster-badge badge-high">High Risk</span>
+                                </div>
+                                <h3 class="cluster-title">High Effort, Low Performance</h3>
+                                <p class="cluster-desc">Very active in online learning environment but struggling to translate effort into assessment marks.</p>
+                                <div class="cluster-stats">
+                                    <div class="cs"><span class="cs-val" id="c3-count">—</span><span class="cs-label">Students</span></div>
+                                    <div class="cs"><span class="cs-val" id="c3-clicks">—</span><span class="cs-label">Avg Clicks</span></div>
+                                    <div class="cs"><span class="cs-val" id="c3-score">—</span><span class="cs-label">Avg Score</span></div>
+                                </div>
+                                <div class="cluster-intervention">
+                                    <strong>Intervention:</strong> Review assessment preparation strategies. Provide alternative concept explanations and learning support referral.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cluster Visualization -->
+                        <div class="chart-card chart-full">
+                            <h3 class="chart-title">PCA Cluster Visualization</h3>
+                            <p class="chart-subtitle">2D projection of multidimensional student learning behaviors.</p>
+                            <canvas id="chart-clusters" width="800" height="450"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 6: FAIRNESS
+                     ============================================================ -->
+                <div class="page-view" id="page-fairness" data-page="fairness">
+                    <section class="section" id="fairness">
+                        <div class="section-header">
+                            <span class="section-tag">⚖️ Algorithmic Fairness</span>
+                            <h2 class="section-title">Demographic Parity & Bias Monitoring</h2>
+                            <p class="section-desc">Monitoring prediction equity across demographic groups to ensure unbiased at-risk identification.</p>
+                        </div>
+
+                        <!-- AFI Gauge -->
+                        <div class="afi-container">
+                            <div class="afi-gauge">
+                                <svg viewBox="0 0 200 120" class="afi-svg">
+                                    <defs>
+                                        <linearGradient id="afi-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#e74c3c"/>
+                                            <stop offset="33%" stop-color="#f39c12"/>
+                                            <stop offset="66%" stop-color="#f1c40f"/>
+                                            <stop offset="100%" stop-color="#2ecc71"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <path d="M 20 100 A 80 80 0 0 1 180 100" class="afi-track" />
+                                    <path d="M 20 100 A 80 80 0 0 1 180 100" class="afi-fill" id="afi-arc"/>
+                                    <circle cx="100" cy="100" r="4" fill="var(--accent)" id="afi-needle"/>
+                                </svg>
+                                <div class="afi-value-container">
+                                    <span class="afi-value" id="afi-value">0.91</span>
+                                    <span class="afi-label">Algorithmic Fairness Index</span>
+                                </div>
+                            </div>
+                            <div class="afi-scale">
+                                <span class="afi-mark" style="color:#e74c3c;">0.0 Biased</span>
+                                <span class="afi-mark" style="color:#f39c12;">0.5 Concern</span>
+                                <span class="afi-mark" style="color:#f1c40f;">0.7 Acceptable</span>
+                                <span class="afi-mark" style="color:#2ecc71;">1.0 Fair</span>
+                            </div>
+                            <p class="afi-interpretation" id="afi-interpretation"></p>
+                        </div>
+
+                        <!-- Fairness by Group -->
+                        <div class="fairness-tabs">
+                            <div class="tab-buttons">
+                                <button class="tab-btn active" data-tab="gender">Gender</button>
+                                <button class="tab-btn" data-tab="disability">Disability</button>
+                                <button class="tab-btn" data-tab="age">Age Band</button>
+                            </div>
+
+                            <div class="tab-content active" id="tab-gender">
+                                <div class="fairness-chart-container">
+                                    <canvas id="chart-fairness-gender" width="500" height="300"></canvas>
+                                </div>
+                                <div class="fairness-table" id="table-gender"></div>
+                            </div>
+                            <div class="tab-content" id="tab-disability">
+                                <div class="fairness-chart-container">
+                                    <canvas id="chart-fairness-disability" width="500" height="300"></canvas>
+                                </div>
+                                <div class="fairness-table" id="table-disability"></div>
+                            </div>
+                            <div class="tab-content" id="tab-age">
+                                <div class="fairness-chart-container">
+                                    <canvas id="chart-fairness-age" width="500" height="300"></canvas>
+                                </div>
+                                <div class="fairness-table" id="table-age"></div>
+                            </div>
+                        </div>
+
+                        <!-- Methodology -->
+                        <div class="methodology-card">
+                            <h4>📖 Fairness Methodology</h4>
+                            <p><strong>AFI = 1 − max(recall_gap)</strong> across all sensitive attributes.</p>
+                            <p>Computed using <a href="https://fairlearn.org/" target="_blank">Fairlearn</a> MetricFrame across Gender, Disability, and Age Band.</p>
+                            <div class="methodology-scale">
+                                <span class="ms-item ms-excellent">≥ 0.85 Excellent</span>
+                                <span class="ms-item ms-acceptable">0.70–0.85 Acceptable</span>
+                                <span class="ms-item ms-concern">0.50–0.70 Concern</span>
+                                <span class="ms-item ms-critical">&lt; 0.50 Critical</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ============================================================
+                     PAGE 7: REPORT
+                     ============================================================ -->
+                <div class="page-view" id="page-report" data-page="report">
+                    <section class="section" id="report">
+                        <div class="section-header">
+                            <span class="section-tag">📝 Results Report</span>
+                            <h2 class="section-title">KPI Summary & Hypothesis Testing</h2>
+                            <p class="section-desc">Complete results with honest actual metrics, baseline comparison, and statistical significance testing.</p>
+                        </div>
+
+                        <!-- KPI Table -->
+                        <div class="report-card">
+                            <h3>📊 Full KPI Summary</h3>
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>KPI</th>
+                                        <th>XGBoost</th>
+                                        <th>Baseline (LR)</th>
+                                        <th>Target</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="kpi-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Hypothesis Test -->
+                        <div class="hypothesis-card">
+                            <h3>🧪 Hypothesis Test (H₁ vs H₀)</h3>
+                            <div class="hypothesis-content">
+                                <div class="hypothesis-box h0">
+                                    <strong>H₀ (Null):</strong> XGBoost performs no better than the Logistic Regression baseline.
+                                </div>
+                                <div class="hypothesis-box h1">
+                                    <strong>H₁ (Alternative):</strong> XGBoost provides statistically significantly better at-risk student prediction.
+                                </div>
+                            </div>
+                            <div class="hypothesis-results">
+                                <div class="hyp-metric">
+                                    <span class="hm-label">Statistical Test</span>
+                                    <span class="hm-value">McNemar's</span>
+                                </div>
+                                <div class="hyp-metric">
+                                    <span class="hm-label">Test Statistic</span>
+                                    <span class="hm-value" id="hyp-statistic">—</span>
+                                </div>
+                                <div class="hyp-metric">
+                                    <span class="hm-label">P-value</span>
+                                    <span class="hm-value" id="hyp-pvalue">—</span>
+                                </div>
+                                <div class="hyp-metric">
+                                    <span class="hm-label">Significance</span>
+                                    <span class="hm-value" id="hyp-result">—</span>
+                                </div>
+                            </div>
+                            <div class="hypothesis-verdict" id="hyp-verdict"></div>
+                        </div>
+
+                        <!-- Export Actions -->
+                        <div class="export-bar">
+                            <button class="btn-primary" id="export-report-txt">⬇ Download Report (TXT)</button>
+                            <button class="btn-secondary" id="export-kpi-csv">⬇ KPI Summary (CSV)</button>
+                        </div>
+
+                        <!-- Feedback History Log -->
+                        <div class="report-card" style="margin-top: 32px;">
+                            <h3>📜 Teacher Override History Log (HITL)</h3>
+                            <div class="table-container">
+                                <table class="data-table" id="feedback-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Student ID</th>
+                                            <th>Original Prediction</th>
+                                            <th>Teacher Decision</th>
+                                            <th>Notes</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="feedback-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-msg"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+.venv
+
+# macOS / Windows OS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Raw dataset zip files (ignore heavy raw zip files, keep processed CSVs)
+data/raw/*.zip
+data/raw/*.csv
+
+# IDE and Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Streamlit temporary files & cache
+.streamlit/cache/
+
+# Streamlit temporary files & cache
+.streamlit/cache/
+
+# macOS / Windows OS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini

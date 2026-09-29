@@ -1,0 +1,39 @@
+
+================================================================================
+    AI-BASED EDM PERFORMANCE RECOGNITION SYSTEM — RESULTS REPORT
+    Generated: 2026-09-29 18:57:07
+================================================================================
+
+1. MODEL PERFORMANCE
+--------------------
+                    XGBoost     Logistic Regression (Baseline)
+  Accuracy:         0.9284       0.8458
+  Precision:        0.9621       0.8757
+  Recall:           0.8998       0.8251
+  F1 Score:         0.9299       0.8497
+  ROC-AUC:          0.9796       0.9324
+
+2. ALGORITHMIC FAIRNESS
+-----------------------
+  Fairness Index (AFI): 0.9462
+  (1.0 = perfectly fair, 0.0 = maximum disparity)
+
+3. HYPOTHESIS TEST (H1 vs H0)
+------------------------------
+  H0: XGBoost performs no better than Logistic Regression baseline.
+  H1: XGBoost provides significantly better at-risk student prediction.
+
+  Test: McNemar's Test
+  Statistic: 349.1150
+  P-value: 0.000000
+  Result: REJECT H0 — XGBoost is significantly better
+
+4. INTERPRETATION
+-----------------
+  XGBoost corrected 682 errors that baseline missed, while baseline corrected 144 errors that XGBoost missed. The difference IS statistically significant at α=0.05 (p=0.0000).
+
+  Note: These are actual results from the OULAD dataset analysis.
+  Any differences from aspirational KPIs in the project dossier
+  reflect real-world model performance and are reported honestly.
+
+================================================================================

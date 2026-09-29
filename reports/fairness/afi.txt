@@ -1,0 +1,19 @@
+Algorithmic Fairness Index: 0.9462
+
+gender gaps:
+  accuracy: 0.0081
+  precision: 0.0076
+  recall: 0.0147
+  f1: 0.0114
+
+age_band gaps:
+  accuracy: 0.0373
+  precision: 0.0132
+  recall: 0.0538
+  f1: 0.0234
+
+disability gaps:
+  accuracy: 0.0134
+  precision: 0.0107
+  recall: 0.0348
+  f1: 0.0235
