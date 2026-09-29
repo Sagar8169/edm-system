@@ -17,16 +17,16 @@ Here, Ma'am, you can see our core cohort metrics:
 3. Not At-Risk: 47.2% of students who are progressing safely.
 4. Total Course Modules: 7 academic subjects analyzed simultaneously.
 
-Below the summary cards, our XGBoost Machine Learning model achieved over 92% accuracy and 90% recall.
+Below the summary cards, our XGBoost (Extreme Gradient Boosting — our primary high-accuracy Machine Learning decision-tree model) achieved over 92% accuracy and 90% recall.
 
-Furthermore, we grouped students into 4 distinct Clusters:
-- Critical Risk: Students with low online activity and multiple missed assignments.
+Furthermore, using Clustering (K-Means AI grouping), we grouped students into 4 distinct Clusters:
+- Critical Risk: Students with low online LMS (Learning Management System) activity and multiple missed assignments.
 - High Risk: Students with declining quiz scores.
 - Medium Risk: Average performers who need light monitoring.
 - Low Risk: Top-performing, highly engaged students.
 
 Now, let me open the 'Student List' tab.
-Here, teachers have a complete management system:
+Here, teachers have a complete CRUD management system (Create, Read, Update, Delete student records):
 - We can search any student by ID or filter by Risk Level, Cluster Group, or Course Module.
 - We can Add new student records, Edit existing details, or Delete outdated records directly in the system database.
 
@@ -39,21 +39,21 @@ Now, I will hand over to Sagar to explain Student Details, SHAP Explainability, 
 
 Let's navigate to the 'Student Detail' page.
 One major problem in AI is the 'black box' issue — teachers cannot blindly trust a model unless they understand why a student was flagged.
-For this, we integrated SHAP explanations.
+For this, we integrated SHAP (SHapley Additive exPlanations — an AI explainability framework that breaks down the exact positive and negative factors behind a student's risk score).
 
 If we select Student ID 248800:
 - The SHAP bar chart shows exact risk contributors. For instance, low LMS login days and missed quiz submissions push the risk score up.
 - Conversely, high assignment scores push the risk down.
 
 Now, what if the AI model makes a mistake, or the teacher knows something personal about the student?
-We built the 'Teacher Override' feature:
+We built the 'Teacher Override' (Human-in-the-Loop decision system) feature:
 - The teacher can click 'Confirm Risk' or 'Override for Student'.
 - They can type custom notes, such as: 'Granted 3-day extension due to medical leave.'
-- This decision is logged in real-time in our feedback log.
+- This decision is logged in real-time in our feedback log to improve AI transparency.
 
 Finally, in our 'Report' tab:
-- We conducted McNemar's Statistical Hypothesis Test, proving XGBoost is statistically superior to baseline models with p < 0.0001.
-- We audited the Algorithmic Fairness Index, proving zero demographic bias across age, gender, or region.
+- We conducted McNemar's Statistical Hypothesis Test (a rigorous mathematical test proving XGBoost performs significantly better than traditional baseline models with p < 0.0001).
+- We audited the AFI (Algorithmic Fairness Index = 0.9462, a metric confirming the AI model treats all demographic groups equally with zero bias across age, gender, or region).
 
 Now, Amaresh will present the Student Portal experience."
 
