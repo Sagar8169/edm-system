@@ -58,17 +58,21 @@ scaler_path = get_models_dir() / "scaler.joblib"
 feature_cols_path = get_models_dir() / "feature_cols.joblib"
 
 if model_path.exists() and scaler_path.exists() and feature_cols_path.exists():
-    model = joblib.load(model_path)
-    scaler = joblib.load(scaler_path)
-    feature_cols = joblib.load(feature_cols_path)
+    try:
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        feature_cols = joblib.load(feature_cols_path)
 
-    available_features = [c for c in feature_cols if c in features.columns]
-    if len(available_features) == len(feature_cols):
-        X = features[feature_cols].values
-        X_scaled = scaler.transform(X)
-        features["risk_score"] = model.predict_proba(X_scaled)[:, 1]
-        features["predicted_risk"] = (features["risk_score"] >= 0.5).astype(int)
-    else:
+        available_features = [c for c in feature_cols if c in features.columns]
+        if len(available_features) == len(feature_cols):
+            X = features[feature_cols].values
+            X_scaled = scaler.transform(X)
+            features["risk_score"] = model.predict_proba(X_scaled)[:, 1]
+            features["predicted_risk"] = (features["risk_score"] >= 0.5).astype(int)
+        else:
+            features["risk_score"] = np.nan
+            features["predicted_risk"] = features.get("at_risk", np.nan)
+    except Exception:
         features["risk_score"] = np.nan
         features["predicted_risk"] = features.get("at_risk", np.nan)
 

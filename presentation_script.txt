@@ -1,0 +1,90 @@
+[SPEAKER 1 — GAURAV (System Overview, Dashboard & Student List)]
+
+"Respected Ma'am and dear friends, good morning.
+
+Today, our team is presenting our project: the Educational Data Mining Performance Recognition System.
+
+The main problem we are solving is early academic failure. In traditional education, teachers usually realize a student is struggling only after the final exam results come out. By then, it is often too late to save the semester.
+
+Our project uses Machine Learning to spot struggling students early — during the term — so teachers can step in and help in time.
+
+Let me log in to the Teacher Portal. I am entering User ID 'admin11' and password '1122'.
+
+Once logged in, we land on the System Dashboard.
+Here, Ma'am, you can see our core cohort metrics:
+1. Total Enrolled Students: Over 32,000 students across 7 course modules.
+2. At-Risk Students: The model has flagged 52.8% of students who need early support.
+3. Not At-Risk: 47.2% of students who are progressing safely.
+4. Total Course Modules: 7 academic subjects analyzed simultaneously.
+
+Below the summary cards, our XGBoost Machine Learning model achieved over 92% accuracy and 90% recall.
+
+Furthermore, we grouped students into 4 distinct Clusters:
+- Critical Risk: Students with low online activity and multiple missed assignments.
+- High Risk: Students with declining quiz scores.
+- Medium Risk: Average performers who need light monitoring.
+- Low Risk: Top-performing, highly engaged students.
+
+Now, let me open the 'Student List' tab.
+Here, teachers have a complete management system:
+- We can search any student by ID or filter by Risk Level, Cluster Group, or Course Module.
+- We can Add new student records, Edit existing details, or Delete outdated records directly in the system database.
+
+Now, I will hand over to Sagar to explain Student Details, SHAP Explainability, and Executive Reports."
+
+
+[SPEAKER 2 — SAGAR (Student Detail, SHAP Explainability, Teacher Override & Report)]
+
+"Thank you, Gaurav. Respected Ma'am, I will now demonstrate the Student Detail view, SHAP Explainability, Teacher Override, and Executive Reports.
+
+Let's navigate to the 'Student Detail' page.
+One major problem in AI is the 'black box' issue — teachers cannot blindly trust a model unless they understand why a student was flagged.
+For this, we integrated SHAP explanations.
+
+If we select Student ID 248800:
+- The SHAP bar chart shows exact risk contributors. For instance, low LMS login days and missed quiz submissions push the risk score up.
+- Conversely, high assignment scores push the risk down.
+
+Now, what if the AI model makes a mistake, or the teacher knows something personal about the student?
+We built the 'Teacher Override' feature:
+- The teacher can click 'Confirm Risk' or 'Override for Student'.
+- They can type custom notes, such as: 'Granted 3-day extension due to medical leave.'
+- This decision is logged in real-time in our feedback log.
+
+Finally, in our 'Report' tab:
+- We conducted McNemar's Statistical Hypothesis Test, proving XGBoost is statistically superior to baseline models with p < 0.0001.
+- We audited the Algorithmic Fairness Index, proving zero demographic bias across age, gender, or region.
+
+Now, Amaresh will present the Student Portal experience."
+
+
+[SPEAKER 3 — AMARESH (Student Portal & Personalized Coaching)]
+
+"Thank you, Sagar. Respected Ma'am, I will now present the Student Portal experience.
+
+As a student, seeing complex Machine Learning metrics like 'XGBoost ROC-AUC' or 'SHAP values' can be confusing and stressful. Therefore, we designed a simple, encouraging, non-technical portal tailored specifically for students.
+
+Let me log in as a Student using Student ID '28400' and default password '1234'.
+
+Notice how clean and friendly the user interface is:
+1. Academic Standing Banner:
+   - Instead of scary labels, the portal gives positive, actionable feedback like 'A small push will help' or 'You are doing great'.
+2. Progress Score Gauge:
+   - A single progress score out of 100 shows overall academic health at a glance.
+
+3. Easy Comparison with Class Averages:
+   - Instead of technical jargon, we use clear, everyday terms:
+     * 'Days Logged In' vs Class Average
+     * 'Average Assignment Grade' vs Class Average
+     * 'Total Study Clicks' vs Class Average
+     * 'Pending Assignments' count
+
+4. Personalized Next Steps:
+   - The portal automatically gives customized study advice based on the student's data. For example: 'Join free peer tutoring for Course BBB' or 'Log in 3-4 days a week to review notes.'
+
+5. Notes from Your Teacher:
+   - At the bottom, students can read notes sent directly by their teacher or advisor, such as assignment extension approvals or encouraging remarks.
+
+In conclusion, our EDM Performance Recognition System builds a complete bridge between data-driven teacher analytics and student encouragement.
+
+Thank you Ma'am, and we are now open for any questions!"

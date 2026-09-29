@@ -65,16 +65,40 @@ if clusters_path.exists():
     if len(cols_to_merge) > len(merge_cols):
         features = features.merge(clusters[cols_to_merge], on=merge_cols, how="left")
 
-# Load model artifacts
+# Load model artifacts safely
 model_path = get_models_dir() / "xgb_model.joblib"
 scaler_path = get_models_dir() / "scaler.joblib"
 feature_cols_path = get_models_dir() / "feature_cols.joblib"
 shap_explainer_path = get_models_dir() / "shap_explainer.joblib"
 
-model = joblib.load(model_path) if model_path.exists() else None
-scaler = joblib.load(scaler_path) if scaler_path.exists() else None
-feature_cols = joblib.load(feature_cols_path) if feature_cols_path.exists() else None
-shap_explainer = joblib.load(shap_explainer_path) if shap_explainer_path.exists() else None
+try:
+    model = joblib.load(model_path) if model_path.exists() else None
+except Exception:
+    model = None
+
+try:
+    scaler = joblib.load(scaler_path) if scaler_path.exists() else None
+except Exception:
+    scaler = None
+
+try:
+    feature_cols = joblib.load(feature_cols_path) if feature_cols_path.exists() else None
+except Exception:
+    feature_cols = None
+
+shap_explainer = None
+if shap_explainer_path.exists():
+    try:
+        shap_explainer = joblib.load(shap_explainer_path)
+    except Exception:
+        shap_explainer = None
+
+# Fallback: Reconstruct TreeExplainer directly from model if unpickling fails on Cloud
+if shap_explainer is None and model is not None:
+    try:
+        shap_explainer = shap.TreeExplainer(model)
+    except Exception:
+        shap_explainer = None
 
 if model is None or scaler is None or feature_cols is None:
     st.error("Model artifacts not found. Run `python run_pipeline.py` first.")
