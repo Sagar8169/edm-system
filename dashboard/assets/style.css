@@ -1,27 +1,29 @@
-/* EDM Dashboard — Ultra-Premium Dark Design System */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+/* EDM Dashboard — High Visibility Dark Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #0b1120;
+    --card-bg: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-gold: #c9a45c;
+    --accent-blue: #38bdf8;
+    --border-light: rgba(255, 255, 255, 0.15);
+}
 
 html, body, [class*="css"], .stApp {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
 }
 
-/* Main Background */
 .stApp {
-    background: radial-gradient(circle at 15% 15%, rgba(30, 27, 75, 0.7) 0%, rgba(15, 23, 42, 1) 50%, rgba(11, 15, 25, 1) 100%) !important;
+    background: radial-gradient(circle at 15% 15%, #1e1b4b 0%, #0f172a 50%, #0b0f19 100%) !important;
     background-attachment: fixed !important;
-    color: #f1f5f9;
+    color: #f8fafc !important;
 }
 
-/* Header & Navigation Bar Styling */
-[data-testid="stHeader"] {
-    background: rgba(15, 23, 42, 0.75) !important;
-    backdrop-filter: blur(12px) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Streamlit Top Nav Items */
-[data-testid="stSidebarNav"] {
-    background: transparent !important;
+/* Make all text clearly visible */
+p, span, label, li, td, th, div {
+    color: #f1f5f9 !important;
 }
 
 /* Headers */
@@ -40,203 +42,110 @@ h1 {
 
 h2, h3 {
     font-weight: 700 !important;
-    color: #94a3b8 !important;
+    color: #cbd5e1 !important;
+}
+
+/* Header & Navigation Bar */
+[data-testid="stHeader"] {
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(14px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Glassmorphism Metric Cards */
 [data-testid="stMetric"] {
-    background: rgba(30, 41, 59, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 14px !important;
     padding: 18px 22px !important;
     backdrop-filter: blur(12px) !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
-    position: relative;
-    overflow: hidden;
-}
-
-[data-testid="stMetric"]::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #6366f1, #a855f7);
-    opacity: 0.8;
-}
-
-[data-testid="stMetric"]:hover {
-    transform: translateY(-3px) !important;
-    border-color: rgba(99, 102, 241, 0.4) !important;
-    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
 }
 
 [data-testid="stMetricValue"] {
     font-family: 'Outfit', sans-serif !important;
-    font-size: 2rem !important;
+    font-size: 2.1rem !important;
     font-weight: 800 !important;
-    color: #f8fafc !important;
+    color: #ffffff !important;
 }
 
 [data-testid="stMetricLabel"] {
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    color: #94a3b8 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    color: #cbd5e1 !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-/* Glassmorphism Forms & Cards */
+/* Forms & Cards */
 [data-testid="stForm"], div.stForm {
-    background: rgba(30, 41, 59, 0.45) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(30, 41, 59, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 16px !important;
-    padding: 30px !important;
-    backdrop-filter: blur(16px) !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    padding: 24px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Inputs & Textareas */
+/* Inputs & Selectboxes */
 .stTextInput input, .stTextArea textarea, .stSelectbox [data-baseweb="select"] {
-    background: rgba(15, 23, 42, 0.7) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: #0f172a !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
     border-radius: 10px !important;
-    color: #f8fafc !important;
+    color: #ffffff !important;
     font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
 }
 
 .stTextInput input:focus, .stTextArea textarea:focus, .stSelectbox [data-baseweb="select"]:focus-within {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
-    background: rgba(15, 23, 42, 0.9) !important;
-}
-
-/* Radio Button Pills */
-div[role="radiogroup"] {
-    background: rgba(15, 23, 42, 0.6);
-    padding: 6px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: inline-flex;
-}
-
-div[role="radiogroup"] label {
-    border-radius: 8px !important;
-    padding: 6px 16px !important;
-    font-weight: 600 !important;
-    transition: all 0.2s ease !important;
+    border-color: #c9a45c !important;
+    box-shadow: 0 0 0 3px rgba(201, 164, 92, 0.3) !important;
 }
 
 /* Buttons */
 .stButton > button {
     border-radius: 10px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     font-size: 0.95rem !important;
     padding: 10px 20px !important;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    border: none !important;
-}
-
-.stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(30, 41, 59, 0.8) !important;
 }
 
 .stButton > button[kind="primary"] {
-    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35) !important;
+    background: linear-gradient(135deg, #c9a45c 0%, #a88138 100%) !important;
+    color: #111827 !important;
+    font-weight: 800 !important;
+    border: none !important;
 }
 
-.stButton > button[kind="primary"]:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
-    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5) !important;
-}
-
-.stButton > button[kind="secondary"] {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-    color: #ffffff !important;
-}
-
-/* Download Buttons */
-.stDownloadButton > button {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-    color: #ffffff !important;
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3) !important;
-}
-
-.stDownloadButton > button:hover {
-    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.45) !important;
-    transform: translateY(-2px) !important;
-}
-
-/* DataFrames */
+/* DataFrames & Tables High Contrast */
 [data-testid="stDataFrame"] {
     border-radius: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    overflow: hidden !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    background: #1e293b !important;
 }
 
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] {
     gap: 10px !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding-bottom: 4px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .stTabs [data-baseweb="tab"] {
     border-radius: 10px 10px 0 0 !important;
     padding: 10px 24px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     color: #94a3b8 !important;
-    background: transparent !important;
-    transition: all 0.2s ease !important;
 }
 
 .stTabs [aria-selected="true"] {
-    color: #6366f1 !important;
-    background: rgba(99, 102, 241, 0.12) !important;
-    border-bottom: 2px solid #6366f1 !important;
+    color: #c9a45c !important;
+    background: rgba(201, 164, 92, 0.15) !important;
+    border-bottom: 3px solid #c9a45c !important;
 }
 
-/* Info/Success/Warning/Error alerts */
-.stAlert {
-    border-radius: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(8px) !important;
-}
-
-/* Custom Code Container */
-pre, code, [data-testid="stCode"] {
-    background: rgba(15, 23, 42, 0.85) !important;
-    color: #e2e8f0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    border-radius: 10px !important;
-}
-
-/* Scrollbars */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.5);
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.5);
-}
-
-/* Hide Streamlit Deploy Button & Footer */
 .stAppDeployButton, .stDeployButton, [data-testid="stDeployButton"], footer {
     display: none !important;
 }
+

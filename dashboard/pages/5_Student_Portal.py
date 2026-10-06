@@ -1,5 +1,5 @@
 """
-Page 5: Student Portal — Personalized, encouraging student view with academic health and coaching recommendations.
+Page 5: Student Portal — Personalized student dashboard with academic status and interactive tools.
 """
 
 import html
@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import plotly.graph_objects as go
+import plotly.express as px
 from pathlib import Path
 import sys
 
@@ -15,6 +16,7 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.data_loader import get_project_root, get_processed_data_dir
+from src.student_names import generate_student_info, get_course_display_name
 
 
 def get_models_dir():
@@ -26,129 +28,57 @@ try:
 except Exception:
     pass
 
-# --- Load Custom CSS (existing project stylesheet) ---
+# --- Load Custom CSS ---
 css_path = Path(__file__).parent.parent / "assets" / "style.css"
 if css_path.exists():
     with open(css_path) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# --- Portal theme (matches the login page: navy + brass) ---
+# Portal stylesheet
 PORTAL_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap');
 
-:root {
-    --ink: #0E1726;
-    --surface: #142033;
-    --surface-raised: #1A2A42;
-    --hairline: #26364F;
-    --text: #F1EEE7;
-    --text-muted: #9AA7BD;
-    --brass: #C9A45C;
-    --sage: #7FB59A;
-    --amber: #E0B25A;
-    --coral: #DB8B78;
-}
+.pt-hello { padding: 1.2rem 0 1.5rem 0; }
+.pt-hello h1 { font-size: clamp(2.0rem, 3.5vw, 2.8rem); margin: 0 0 0.5rem 0; color: #ffffff !important; }
+.pt-hello .pt-meta { color: #94a3b8; font-size: 1rem; }
+.pt-hello .pt-meta b { color: #f8fafc; font-weight: 600; }
 
-html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"] {
-    background:
-        radial-gradient(900px 500px at 88% -10%, rgba(201, 164, 92, 0.10), transparent 60%),
-        var(--ink) !important;
-    color: var(--text);
-    font-family: 'Instrument Sans', system-ui, sans-serif;
-}
-[data-testid="stAppViewContainer"] .main .block-container { max-width: 1120px; padding-top: 1.5rem; padding-bottom: 4rem; }
-h1, h2, h3, h4 { font-family: 'Newsreader', Georgia, serif !important; color: var(--text) !important; font-weight: 500 !important; letter-spacing: -0.01em; }
-
-/* Greeting */
-.pt-hello { padding: 1.4rem 0 1.8rem 0; }
-.pt-hello h1 { font-size: clamp(2.1rem, 4vw, 3.1rem); line-height: 1.1; margin: 0 0 0.7rem 0; }
-.pt-hello .pt-meta { color: var(--text-muted); font-size: 1rem; }
-.pt-hello .pt-meta b { color: var(--text); font-weight: 600; }
-
-/* Section titles */
-.pt-section { margin: 2.6rem 0 0.4rem 0; }
-.pt-section h2 { font-size: 1.7rem; margin: 0 0 0.3rem 0; }
-.pt-section p { color: var(--text-muted); margin: 0 0 0.6rem 0; font-size: 0.98rem; }
-
-/* Status panel */
 .pt-status {
-    background: linear-gradient(180deg, var(--surface-raised), var(--surface));
-    border: 1px solid var(--hairline);
-    border-radius: 20px;
-    padding: 1.9rem 2rem;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem;
     height: 100%;
-    box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .pt-pill {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 5px 13px; border-radius: 999px;
+    padding: 4px 12px; border-radius: 999px;
     font-size: 0.85rem; font-weight: 600;
     border: 1px solid currentColor;
 }
-.pt-pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; display: inline-block; }
-.pt-status h2 { font-size: 2rem; line-height: 1.15; margin: 1.1rem 0 0.7rem 0; }
-.pt-status p { color: var(--text-muted); font-size: 1.02rem; line-height: 1.65; max-width: 52ch; margin: 0; }
+.pt-status h2 { font-size: 1.8rem; margin: 0.8rem 0 0.5rem 0; color: #ffffff !important; }
+.pt-status p { color: #cbd5e1; font-size: 0.98rem; line-height: 1.5; margin: 0; }
 
-/* Comparison rows */
-.cmp { padding: 1.2rem 0; border-bottom: 1px solid var(--hairline); }
-.cmp:first-of-type { border-top: 1px solid var(--hairline); }
-.cmp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.8rem; }
-.cmp-label { color: var(--text); font-weight: 600; font-size: 1rem; }
-.cmp-val { font-family: 'Newsreader', Georgia, serif; font-size: 1.9rem; color: var(--text); }
-.cmp-val small { font-family: 'Instrument Sans', sans-serif; font-size: 0.9rem; color: var(--text-muted); margin-left: 4px; }
-.track { position: relative; height: 8px; border-radius: 99px; background: var(--surface-raised); }
+.cmp { padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cmp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.6rem; }
+.cmp-label { color: #f8fafc; font-weight: 600; font-size: 0.95rem; }
+.cmp-val { font-size: 1.6rem; color: #ffffff; font-weight: 700; }
+.cmp-val small { font-size: 0.85rem; color: #94a3b8; margin-left: 4px; }
+.track { position: relative; height: 8px; border-radius: 99px; background: rgba(15, 23, 42, 0.8); }
 .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; }
-.avg { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--text); opacity: 0.85; border-radius: 2px; }
-.cmp-foot { margin-top: 0.75rem; color: var(--text-muted); font-size: 0.9rem; }
-.cmp-foot b { font-weight: 600; }
-.good { color: var(--sage); }
-.warn { color: var(--amber); }
+.avg { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #ffffff; opacity: 0.9; }
 
-/* Pending assignments */
-.pending { display: flex; align-items: center; gap: 1.2rem; padding: 1.3rem 0; border-bottom: 1px solid var(--hairline); }
-.pending .num { font-family: 'Newsreader', Georgia, serif; font-size: 2.6rem; line-height: 1; min-width: 2.2rem; }
-.pending .txt strong { display: block; font-size: 1rem; color: var(--text); }
-.pending .txt span { color: var(--text-muted); font-size: 0.92rem; }
-
-/* Tips */
-.tip { display: flex; gap: 14px; padding: 1.1rem 0; border-bottom: 1px solid var(--hairline); }
-.tip:first-of-type { border-top: 1px solid var(--hairline); }
-.tip .mark { flex: none; width: 9px; height: 9px; margin-top: 8px; border-radius: 50%; background: var(--brass); }
-.tip h4 { margin: 0 0 0.3rem 0; font-family: 'Instrument Sans', sans-serif !important; font-weight: 600 !important; font-size: 1.02rem; letter-spacing: 0; }
-.tip p { margin: 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 58ch; }
-
-/* Advisor note */
-.note {
-    background: var(--surface);
-    border: 1px solid var(--hairline);
-    border-radius: 16px;
-    padding: 1.5rem 1.6rem;
+.tool-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 15px;
 }
-.note .quote { font-family: 'Newsreader', Georgia, serif; font-size: 1.25rem; line-height: 1.5; color: var(--text); margin: 0 0 1rem 0; }
-.note .by { color: var(--text-muted); font-size: 0.88rem; }
-.note.calm .quote { font-size: 1.1rem; color: var(--text-muted); }
-
-/* Native widgets */
-[data-testid="stAlert"] { border-radius: 12px; border: 1px solid var(--hairline); background: var(--surface); }
-[data-testid="stNumberInput"] input, [data-baseweb="select"] > div {
-    background: var(--ink) !important; border-color: var(--hairline) !important; color: var(--text) !important; border-radius: 10px !important;
-}
-.stButton > button { border-radius: 10px; font-weight: 600; border: 1px solid var(--hairline); background: transparent; color: var(--text); }
-.stButton > button:hover { border-color: var(--brass); color: var(--brass); }
-button:focus-visible { outline: 2px solid var(--brass) !important; outline-offset: 2px; }
-[data-testid="stHeader"] { background: rgba(14, 23, 38, 0.72) !important; backdrop-filter: blur(14px); border-bottom: 1px solid var(--hairline); }
-[data-testid="stToolbar"], [data-testid="stDecoration"], footer { visibility: hidden; height: 0; }
-
-@media (max-width: 800px) { .pt-status { padding: 1.4rem 1.3rem; } }
 </style>
 """
 st.markdown(PORTAL_CSS, unsafe_allow_html=True)
-
-
-def block(s: str) -> str:
-    """Collapse HTML to one line so Markdown never treats indentation as a code block."""
-    return "".join(line.strip() for line in s.splitlines())
 
 
 def num(value, default=0.0):
@@ -164,8 +94,6 @@ logged_in = st.session_state.get("logged_in", False)
 user_role = st.session_state.get("user_role", None)
 student_id = st.session_state.get("student_id", None)
 
-
-# Load data
 features_path = get_processed_data_dir() / "features.csv"
 if not features_path.exists():
     st.error("Dataset not found. Please run the pipeline first.")
@@ -173,47 +101,45 @@ if not features_path.exists():
 
 features = pd.read_csv(features_path)
 
-# If teacher is testing the student portal or student is not selected, let them choose a student ID
 if not student_id or user_role != "student":
-    st.info("**Student ID lookup:** enter or pick a student ID below to preview their portal.")
     demo_ids = [28400, 30268, 11391, 65002, 31604, 8462]
     c_sel1, c_sel2 = st.columns([2, 1])
     with c_sel1:
         student_id_input = st.number_input("Enter Student ID", value=28400, step=1)
         student_id = int(student_id_input)
     with c_sel2:
-        st.write("Or pick a sample student:")
-        pick = st.selectbox("Sample Student", demo_ids, index=0)
-        if st.button("Load Selected Sample"):
+        pick = st.selectbox("Sample Student ID", demo_ids, index=0)
+        if st.button("Load Student Profile"):
             student_id = pick
 
 student_rows = features[features["id_student"] == student_id]
 
 if student_rows.empty:
-    st.error(f"Student ID **{student_id}** isn't in our records. Check the ID and try again.")
+    st.error(f"Student ID {student_id} not found.")
     st.stop()
 
-# If multiple enrollments exist, let student pick module
-mod_col = "code_module_original" if "code_module_original" in student_rows.columns else "code_module"
-if len(student_rows) > 1:
-    mod_list = student_rows[mod_col].tolist()
-    sel_mod = st.selectbox("Select Course Module Enrollment", mod_list)
-    student_row = student_rows[student_rows[mod_col] == sel_mod].iloc[0]
-else:
-    student_row = student_rows.iloc[0]
+student_row = student_rows.iloc[0]
 
-# Load model artifacts to calculate risk score
+# Generate student metadata
+s_info = generate_student_info(student_id, student_row.get("avg_score", 75.0), student_row.get("days_active", 40.0))
+student_name = s_info["student_name"]
+student_cgpa = s_info["cgpa"]
+student_att = s_info["attendance_pct"]
+
+raw_mod = student_row.get("code_module_original", student_row.get("code_module", "AAA"))
+course_name = get_course_display_name(raw_mod)
+
+# Calculate Risk Score
 model_path = get_models_dir() / "xgb_model.joblib"
 scaler_path = get_models_dir() / "scaler.joblib"
 feature_cols_path = get_models_dir() / "feature_cols.joblib"
 
-risk_score = 0.5
+risk_score = 0.2
 if model_path.exists() and scaler_path.exists() and feature_cols_path.exists():
     try:
         model = joblib.load(model_path)
         scaler = joblib.load(scaler_path)
         feature_cols = joblib.load(feature_cols_path)
-
         available_feats = [c for c in feature_cols if c in student_row.index]
         if len(available_feats) == len(feature_cols):
             x_vals = student_row[feature_cols].values.reshape(1, -1)
@@ -222,251 +148,184 @@ if model_path.exists() and scaler_path.exists() and feature_cols_path.exists():
     except Exception:
         risk_score = 0.5 if student_row.get("at_risk", 0) == 1 else 0.2
 
-# --- Page Header ---
-module_name = student_row.get("code_module_original", student_row.get("code_module", "N/A"))
-semester_name = student_row.get("code_presentation_original", student_row.get("code_presentation", "Current Semester"))
-
+# Header
 st.markdown(
-    block(f"""
+    f"""
     <div class="pt-hello">
-        <h1>Welcome back, Student #{html.escape(str(student_id))}</h1>
-        <div class="pt-meta">Course <b>{html.escape(str(module_name))}</b> &nbsp;·&nbsp; Semester <b>{html.escape(str(semester_name))}</b></div>
+        <h1>Welcome back, {student_name}</h1>
+        <div class="pt-meta">Student ID: <b>#{student_id}</b> &nbsp;·&nbsp; Enrolled Course: <b>{course_name}</b></div>
     </div>
-    """),
+    """,
     unsafe_allow_html=True,
 )
 
-# --- Section 1: Academic Status & Progress Score ---
-if risk_score < 0.40:
-    tone, badge = "var(--sage)", "On track"
-    headline = "You're doing great."
-    body = ("You're studying regularly, handing work in on time, and your grades show it. "
-            "Keep this rhythm going through your final assignments.")
-elif risk_score < 0.70:
-    tone, badge = "var(--amber)", "Needs attention"
-    headline = "A small push will help."
-    body = ("Your recent activity or quiz scores are a little below your class average. "
-            "A bit of extra study time and regular logins this week will move things in the right direction.")
-else:
-    tone, badge = "var(--coral)", "Support available"
-    headline = "Let's get you extra support."
-    body = ("Some assignments are pending, or you haven't logged in recently. That's fixable. "
-            "Free 1-on-1 tutoring, assignment extensions, and advisor time are open to you.")
-
+# Status Cards
 health_score = int(round((1.0 - risk_score) * 100))
-gauge_hex = "#7FB59A" if health_score >= 60 else ("#E0B25A" if health_score >= 35 else "#DB8B78")
 
-col_status, col_gauge = st.columns([3, 2], gap="large")
+col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+with col_m1:
+    st.metric("Academic Health Score", f"{health_score} / 100")
+with col_m2:
+    st.metric("Current CGPA", f"{student_cgpa:.2f}")
+with col_m3:
+    st.metric("Overall Attendance", f"{student_att:.1f}%")
+with col_m4:
+    avg_score = num(student_row.get("avg_score", 0.0))
+    st.metric("Average Score", f"{avg_score:.1f}%")
 
-with col_status:
-    st.markdown(
-        block(f"""
-        <div class="pt-status">
-            <span class="pt-pill" style="color:{tone}"><i></i>{badge}</span>
-            <h2>{headline}</h2>
-            <p>{body}</p>
-        </div>
-        """),
-        unsafe_allow_html=True,
-    )
+st.markdown("---")
 
-with col_gauge:
-    fig_gauge = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=health_score,
-        title={"text": "Overall progress", "font": {"size": 16, "color": "#9AA7BD", "family": "Instrument Sans, sans-serif"}},
-        number={"font": {"size": 58, "color": "#F1EEE7", "family": "Newsreader, Georgia, serif"}},
-        gauge={
-            "axis": {"range": [0, 100], "tickwidth": 0, "tickcolor": "rgba(0,0,0,0)", "tickfont": {"color": "#64738C", "size": 11}},
-            "bar": {"color": gauge_hex, "thickness": 0.28},
-            "bgcolor": "rgba(0,0,0,0)",
-            "borderwidth": 0,
-            "steps": [
-                {"range": [0, 35], "color": "rgba(219, 139, 120, 0.14)"},
-                {"range": [35, 60], "color": "rgba(224, 178, 90, 0.14)"},
-                {"range": [60, 100], "color": "rgba(127, 181, 154, 0.14)"},
-            ],
-        },
-    ))
-    fig_gauge.update_layout(
-        height=270,
-        margin=dict(l=24, r=24, t=50, b=10),
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font={"color": "#F1EEE7"},
-    )
-    st.plotly_chart(fig_gauge, width="stretch")
+# Main Portal Tabs
+tab_overview, tab_assignments, tab_planner, tab_cgpa = st.tabs([
+    "Academic Overview",
+    "Assignment Tracker",
+    "Smart Weekly Study Planner",
+    "CGPA & Target Score Estimator"
+])
 
-# --- Section 2: Student Progress vs. Class Averages ---
-class_days_med = num(features["days_active"].median(), 45) if "days_active" in features.columns else 45
-class_score_med = num(features["avg_score"].median(), 75.0) if "avg_score" in features.columns else 75.0
-class_clicks_med = num(features["total_clicks"].median(), 500) if "total_clicks" in features.columns else 500
+with tab_overview:
+    col_status, col_gauge = st.columns([3, 2], gap="large")
+    with col_status:
+        if risk_score < 0.40:
+            badge_color, badge_text = "#7FB59A", "On Track"
+            head_txt = "You are performing very well!"
+            body_txt = "Your assignment scores and engagement levels are consistently high. Keep up the great work!"
+        elif risk_score < 0.70:
+            badge_color, badge_text = "#E0B25A", "Needs Focus"
+            head_txt = "Consistent effort recommended"
+            body_txt = "Your activity is slightly below average. Regular logins and submitting pending tasks will boost your score."
+        else:
+            badge_color, badge_text = "#DB8B78", "Support Recommended"
+            head_txt = "Academic assistance available"
+            body_txt = "You have pending assignments or low attendance. Reach out to your course counselor or mentor for guidance."
 
-my_days = num(student_row.get("days_active", 0))
-my_score = num(student_row.get("avg_score", 0.0))
-my_clicks = num(student_row.get("total_clicks", 0))
-my_missed = num(student_row.get("submissions_missed", 0))
-
-st.markdown(
-    block("""
-    <div class="pt-section">
-        <h2>How you compare</h2>
-        <p>Your numbers next to the class average. The white line marks the average.</p>
-    </div>
-    """),
-    unsafe_allow_html=True,
-)
-
-
-def compare_row(label, mine, avg, mine_txt, unit, foot_diff_txt, scale_cap=None):
-    scale = max(mine, avg * 1.6, 1.0)
-    if scale_cap:
-        scale = scale_cap
-    fill_w = min(max(mine / scale * 100, 0), 100)
-    avg_x = min(max(avg / scale * 100, 0), 100)
-    ahead = mine >= avg
-    color = "var(--sage)" if ahead else "var(--amber)"
-    cls = "good" if ahead else "warn"
-    return block(f"""
-    <div class="cmp">
-        <div class="cmp-head">
-            <span class="cmp-label">{label}</span>
-            <span class="cmp-val">{mine_txt}<small>{unit}</small></span>
-        </div>
-        <div class="track">
-            <div class="fill" style="width:{fill_w:.1f}%; background:{color};"></div>
-            <div class="avg" style="left:{avg_x:.1f}%;"></div>
-        </div>
-        <div class="cmp-foot"><b class="{cls}">{foot_diff_txt}</b></div>
-    </div>
-    """)
-
-
-d_days = my_days - class_days_med
-d_score = my_score - class_score_med
-d_clicks = my_clicks - class_clicks_med
-
-rows_html = ""
-rows_html += compare_row(
-    "Days logged in", my_days, class_days_med, f"{int(my_days)}", "days",
-    f"{abs(int(d_days))} days {'ahead of' if d_days >= 0 else 'behind'} the class average of {int(class_days_med)}",
-)
-rows_html += compare_row(
-    "Average assignment grade", my_score, class_score_med, f"{my_score:.1f}", "%",
-    f"{abs(d_score):.1f} points {'above' if d_score >= 0 else 'below'} the class average of {class_score_med:.1f}%",
-    scale_cap=100,
-)
-rows_html += compare_row(
-    "Study activity", my_clicks, class_clicks_med, f"{int(my_clicks):,}", "clicks",
-    f"{abs(int(d_clicks)):,} clicks {'more than' if d_clicks >= 0 else 'fewer than'} the class average of {int(class_clicks_med):,}",
-)
-
-if my_missed > 0:
-    pend_color = "var(--amber)"
-    pend_title = f"{int(my_missed)} assignment{'s' if int(my_missed) != 1 else ''} still waiting"
-    pend_sub = "Submit them, or ask your teacher about handing them in late."
-else:
-    pend_color = "var(--sage)"
-    pend_title = "You're all caught up"
-    pend_sub = "No assignments are pending."
-
-rows_html += block(f"""
-<div class="pending">
-    <div class="num" style="color:{pend_color}">{int(my_missed)}</div>
-    <div class="txt"><strong>{pend_title}</strong><span>{pend_sub}</span></div>
-</div>
-""")
-
-st.markdown(rows_html, unsafe_allow_html=True)
-
-# --- Section 3: Personalized Study Tips & Next Steps ---
-st.markdown(
-    block("""
-    <div class="pt-section">
-        <h2>What to do next</h2>
-        <p>Tips picked from your own numbers.</p>
-    </div>
-    """),
-    unsafe_allow_html=True,
-)
-
-col_plan, col_msg = st.columns([3, 2], gap="large")
-
-with col_plan:
-    recommendations = []
-
-    if my_missed > 0:
-        recommendations.append({
-            "title": f"Finish your {int(my_missed)} pending assignment{'s' if int(my_missed) != 1 else ''}",
-            "tip": "Submit any overdue quizzes, or ask your teacher about turning in late work."
-        })
-
-    if my_days < class_days_med:
-        recommendations.append({
-            "title": "Log in more often",
-            "tip": f"You've logged in {int(my_days)} days and the class average is {int(class_days_med)}. Aim for 3 to 4 days a week to go over the study notes."
-        })
-
-    if my_score < 70.0:
-        recommendations.append({
-            "title": "Join a free peer tutoring session",
-            "tip": f"Study groups for {html.escape(str(module_name))} meet twice a week, and students who join tend to score better on exams."
-        })
-
-    if not recommendations:
-        recommendations.append({
-            "title": "Keep doing what you're doing",
-            "tip": "You're ahead of the class on attendance, assignments, and grades. Hold on to that momentum."
-        })
-
-    tips_html = "".join(
-        block(f"""
-        <div class="tip">
-            <span class="mark"></span>
-            <div><h4>{item['title']}</h4><p>{item['tip']}</p></div>
-        </div>
-        """)
-        for item in recommendations
-    )
-    st.markdown(tips_html, unsafe_allow_html=True)
-
-with col_msg:
-    st.markdown("#### Notes from your teacher")
-
-    feedback_path = get_project_root() / "feedback_log.csv"
-    found_note = False
-
-    if feedback_path.exists():
-        try:
-            fb_df = pd.read_csv(feedback_path)
-            if not fb_df.empty and "student_id" in fb_df.columns:
-                student_fb = fb_df[fb_df["student_id"].astype(str) == str(student_id)]
-                if not student_fb.empty and "notes" in student_fb.columns:
-                    valid_notes = student_fb[student_fb["notes"].fillna("").astype(str).str.strip() != ""]
-                    if not valid_notes.empty:
-                        latest = valid_notes.iloc[-1]
-                        note_text = html.escape(str(latest.get("notes", "")).strip())
-                        timestamp_str = html.escape(str(latest.get("timestamp", ""))[:10])
-                        st.markdown(
-                            block(f"""
-                            <div class="note">
-                                <p class="quote">“{note_text}”</p>
-                                <div class="by">Your teacher · {timestamp_str}</div>
-                            </div>
-                            """),
-                            unsafe_allow_html=True,
-                        )
-                        found_note = True
-        except Exception:
-            pass
-
-    if not found_note:
         st.markdown(
-            block("""
-            <div class="note calm">
-                <p class="quote">Nothing flagged. Your teacher hasn't raised any concerns, so keep following your study plan.</p>
-                <div class="by">Questions? Reach out any time.</div>
+            f"""
+            <div class="pt-status">
+                <span class="pt-pill" style="color:{badge_color}"><i></i>{badge_text}</span>
+                <h2>{head_txt}</h2>
+                <p>{body_txt}</p>
             </div>
-            """),
+            """,
             unsafe_allow_html=True,
+        )
+
+    with col_gauge:
+        fig_g = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=health_score,
+            title={"text": "Performance Indicator", "font": {"size": 16, "color": "#cbd5e1"}},
+            number={"font": {"size": 50, "color": "#ffffff"}},
+            gauge={
+                "axis": {"range": [0, 100]},
+                "bar": {"color": "#38bdf8", "thickness": 0.3},
+                "steps": [
+                    {"range": [0, 40], "color": "rgba(219, 139, 120, 0.2)"},
+                    {"range": [40, 70], "color": "rgba(224, 178, 90, 0.2)"},
+                    {"range": [70, 100], "color": "rgba(127, 181, 154, 0.2)"},
+                ],
+            },
+        ))
+        fig_g.update_layout(height=240, margin=dict(l=20, r=20, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)")
+        st.plotly_chart(fig_g, width="stretch")
+
+    # Comparison metrics
+    st.markdown("### Class Comparison")
+    class_days_med = num(features["days_active"].median(), 45)
+    class_score_med = num(features["avg_score"].median(), 75.0)
+
+    my_days = num(student_row.get("days_active", 0))
+    my_score = num(student_row.get("avg_score", 0.0))
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.write(f"**Days Active on LMS**: {int(my_days)} days (Class Avg: {int(class_days_med)} days)")
+        st.progress(min(1.0, max(0.0, my_days / (class_days_med * 1.5))))
+    with c2:
+        st.write(f"**Average Assignment Grade**: {my_score:.1f}% (Class Avg: {class_score_med:.1f}%)")
+        st.progress(min(1.0, max(0.0, my_score / 100.0)))
+
+with tab_assignments:
+    st.markdown("### Interactive Assignment & Quiz Tracker")
+    st.markdown("Track your current semester submissions and marks.")
+    
+    # Mock assignments data customized for student
+    assignments_data = [
+        {"Assignment": "Module Quiz 1", "Due Date": "Week 3", "Weight": "15%", "Status": "Completed", "Score (%)": max(50.0, avg_score + 4.0)},
+        {"Assignment": "Mid-Term Project", "Due Date": "Week 7", "Weight": "30%", "Status": "Completed", "Score (%)": max(45.0, avg_score - 2.0)},
+        {"Assignment": "Lab Assessment", "Due Date": "Week 10", "Weight": "20%", "Status": "Completed" if num(student_row.get("submissions_missed", 0)) == 0 else "Pending", "Score (%)": max(40.0, avg_score) if num(student_row.get("submissions_missed", 0)) == 0 else 0.0},
+        {"Assignment": "Final Capstone Submission", "Due Date": "Week 14", "Weight": "35%", "Status": "Upcoming", "Score (%)": "-"},
+    ]
+    df_ass = pd.DataFrame(assignments_data)
+    st.dataframe(df_ass, width="stretch")
+
+with tab_planner:
+    st.markdown("### Smart Weekly Study Planner")
+    st.markdown("Recommended study hours based on your target CGPA and subject difficulty.")
+    
+    col_p1, col_p2 = st.columns([1, 1])
+    with col_p1:
+        target_hours = st.slider("Weekly Dedicated Study Hours", 5, 30, 15, step=1)
+        study_days = st.multiselect("Preferred Study Days", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], default=["Monday", "Wednesday", "Friday", "Saturday"])
+    
+    with col_p2:
+        if study_days:
+            hrs_per_day = round(target_hours / len(study_days), 1)
+            st.info(f"**Recommended Pace**: ~**{hrs_per_day} hours** on each selected day ({', '.join(study_days)}).")
+        else:
+            st.warning("Please select at least one preferred study day.")
+
+    schedule_df = pd.DataFrame({
+        "Subject / Activity": [f"{course_name} - Video Lectures", f"{course_name} - Practical Lab", "Quiz Practice & Review", "Doubts & Revision"],
+        "Weekly Allocated Time": [f"{round(target_hours*0.35, 1)} hrs", f"{round(target_hours*0.35, 1)} hrs", f"{round(target_hours*0.2, 1)} hrs", f"{round(target_hours*0.1, 1)} hrs"],
+        "Priority": ["High", "High", "Medium", "Normal"]
+    })
+    st.table(schedule_df)
+
+with tab_cgpa:
+    st.markdown("### CGPA & Target Score Estimator")
+    st.markdown("Calculate what score you need in remaining assessments to achieve your target CGPA.")
+    
+    col_c1, col_c2 = st.columns(2)
+    with col_c1:
+        current_gpa_input = st.number_input("Current CGPA", min_value=0.0, max_value=10.0, value=float(student_cgpa), step=0.1)
+        target_gpa = st.number_input("Target CGPA", min_value=0.0, max_value=10.0, value=min(10.0, float(student_cgpa) + 0.5), step=0.1)
+    
+    with col_c2:
+        remaining_weight = st.slider("Remaining Assessment Weight (%)", 10, 60, 35, step=5)
+        
+        # Simple CGPA projection math
+        current_weight = 100 - remaining_weight
+        needed_score = ((target_gpa * 10 - current_gpa_input * (current_weight / 10.0)) / (remaining_weight / 10.0)) * 10.0
+        
+        if needed_score <= 100.0:
+            st.success(f"To reach **{target_gpa:.2f} CGPA**, you need an average of **{needed_score:.1f}%** in remaining exams/projects.")
+        else:
+            st.error(f"Reaching **{target_gpa:.2f} CGPA** requires **{needed_score:.1f}%** (exceeds 100%). Try aiming for a slightly lower target CGPA.")
+
+# Teacher Notes Section
+st.markdown("---")
+st.markdown("### Notes from Teacher")
+
+feedback_path = get_project_root() / "feedback_log.csv"
+found_note = False
+
+if feedback_path.exists():
+    try:
+        fb_df = pd.read_csv(feedback_path)
+        if not fb_df.empty and "student_id" in fb_df.columns:
+            student_fb = fb_df[fb_df["student_id"].astype(str) == str(student_id)]
+            if not student_fb.empty and "notes" in student_fb.columns:
+                valid_notes = student_fb[student_fb["notes"].fillna("").astype(str).str.strip() != ""]
+                if not valid_notes.empty:
+                    latest = valid_notes.iloc[-1]
+                    note_text = html.escape(str(latest.get("notes", "")).strip())
+                    st.info(f"**Teacher Feedback**: “{note_text}”")
+                    found_note = True
+    except Exception:
+        pass
+
+if not found_note:
+    st.info("No specific alerts from your teacher. You are currently on track with your study plan.")
+
         )

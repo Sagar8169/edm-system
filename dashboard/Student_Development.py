@@ -439,11 +439,12 @@ if logged_in:
     header_container = st.container()
     with header_container:
         if user_role == "teacher":
+
             col_status, col_nav, col_logout = st.columns([1.8, 4.5, 1.2])
             with col_status:
                 st.markdown(
                     '<div class="edm-status"><span class="dot"></span>'
-                    '<span class="who">Teacher access</span><span class="meta">admin11</span></div>',
+                    '<span class="who">Teacher Access</span><span class="meta">admin11</span></div>',
                     unsafe_allow_html=True,
                 )
             with col_nav:
@@ -459,6 +460,7 @@ if logged_in:
             with col_logout:
                 if st.button("Log out", key="global_top_logout", use_container_width=True):
                     logout_user()
+
         else:
             col_status, col_logout = st.columns([5, 1.2])
             with col_status:
