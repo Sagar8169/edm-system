@@ -60,6 +60,10 @@
                         <span class="nav-icon">🔍</span>
                         <span class="nav-text">Student Detail</span>
                     </a>
+                    <a href="#/student-portal" class="sidebar-nav-item" data-page="student-portal" id="nav-student-portal" style="display:none;">
+                        <span class="nav-icon">🎒</span>
+                        <span class="nav-text">My Student Portal</span>
+                    </a>
                     <a href="#/report" class="sidebar-nav-item" data-page="report">
                         <span class="nav-icon">📝</span>
                         <span class="nav-text">Report</span>
@@ -81,7 +85,6 @@
 
         <!-- Main Content Area with Distinct Page Views -->
         <div class="app-main-wrapper">
-            <!-- Mobile Top Bar -->
             <header class="app-topbar">
                 <button class="topbar-toggle-btn" id="mobile-menu-btn" title="Open navigation">
                     <span></span><span></span><span></span>
@@ -89,6 +92,13 @@
                 <div class="topbar-title-wrapper" id="topbar-title">
                     <span class="topbar-icon">🎓</span>
                     <span class="topbar-heading">Student Development</span>
+                </div>
+                <div class="role-selector-wrapper" style="margin-left:auto; margin-right: 15px; display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:0.85rem; font-weight:600; color:var(--text-secondary);">Portal Mode:</span>
+                    <select id="role-select" class="filter-select" style="padding:4px 10px; font-size:0.85rem; background:var(--bg-secondary); color:var(--text-primary); border:1px solid var(--border); border-radius:6px; cursor:pointer;">
+                        <option value="teacher" selected>👨‍🏫 Teacher Login</option>
+                        <option value="student">🎓 Student Login</option>
+                    </select>
                 </div>
                 <div class="topbar-status">
                     <span class="topbar-dot" id="topbar-dot"></span>
@@ -107,13 +117,10 @@
                                 AI-Powered Educational Data Mining
                             </div>
                             <h1 class="hero-title">
-                                🎓 AI-Based EDM <span class="gradient-text">Performance Recognition</span> System
+                                🎓 EDM <span class="gradient-text">Performance Recognition</span> System
                             </h1>
                             <p class="hero-subtitle">
-                                Welcome to the <strong>Human-in-the-Loop Machine Learning Dashboard</strong> for educational data mining.
-                                This system identifies <strong>at-risk students</strong> using engagement and assessment data, provides
-                                <strong>explainable predictions</strong> via SHAP, and enables <strong>teacher overrides</strong> for human-in-the-loop
-                                correction.
+                                Quick overview of <strong>at-risk students</strong>, course performance, and overall academic tracking.
                             </p>
                             
                             <!-- Quick Start Cards (Matching Streamlit Landing Page) -->
@@ -348,10 +355,14 @@
                             <table class="data-table" id="student-table">
                                 <thead>
                                     <tr>
+                                        <th>S.No</th>
                                         <th data-sort="id">Student ID <span class="sort-icon">↕</span></th>
-                                        <th data-sort="module">Module</th>
+                                        <th>Student Name</th>
+                                        <th data-sort="module">Course Section</th>
                                         <th data-sort="risk">Risk Score <span class="sort-icon">↕</span></th>
                                         <th data-sort="status">Status</th>
+                                        <th>CGPA</th>
+                                        <th>Overall Attendance</th>
                                         <th data-sort="clicks">Total Clicks</th>
                                         <th data-sort="score">Avg Score</th>
                                         <th data-sort="days">Days Active</th>
@@ -456,6 +467,122 @@
                                     <p class="intervention-text" id="intervention-text"></p>
                                 </div>
                             </div>
+                        </div>
+                <!-- ============================================================
+                     PAGE: STUDENT PORTAL (STUDENT LOGIN)
+                     ============================================================ -->
+                <div class="page-view" id="page-student-portal" data-page="student-portal">
+                    <section class="section" id="student-portal-sec">
+                        <div class="section-header">
+                            <span class="section-tag">🎓 Student Portal</span>
+                            <h2 class="section-title">My Academic Dashboard</h2>
+                            <p class="section-desc">Personalized course progress, CGPA performance, overall attendance, and study recommendations.</p>
+                        </div>
+
+                        <!-- Student Selector Bar -->
+                        <div class="filters-bar" style="margin-bottom: 20px;">
+                            <label for="sp-student-select" style="font-weight:600; font-size:0.9rem;">Select Student Profile:</label>
+                            <select id="sp-student-select" class="filter-select" style="max-width:300px;"></select>
+                        </div>
+
+                        <!-- Student Personal Overview Cards -->
+                        <div class="kpi-grid">
+                            <div class="kpi-card kpi-primary">
+                                <div class="kpi-icon">👤</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="sp-name">Student</span>
+                                    <span class="kpi-label" id="sp-id">ID: —</span>
+                                </div>
+                                <div class="kpi-trend" id="sp-course">Course: 1-BDA</div>
+                            </div>
+                            <div class="kpi-card kpi-success">
+                                <div class="kpi-icon">🌟</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="sp-cgpa">8.50</span>
+                                    <span class="kpi-label">Current CGPA</span>
+                                </div>
+                                <div class="kpi-trend kpi-trend-up">Good Standing</div>
+                            </div>
+                            <div class="kpi-card kpi-info">
+                                <div class="kpi-icon">📅</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="sp-attendance">88%</span>
+                                    <span class="kpi-label">Overall Attendance</span>
+                                </div>
+                                <div class="kpi-trend kpi-trend-up">Above Requirement (75%)</div>
+                            </div>
+                            <div class="kpi-card kpi-warning">
+                                <div class="kpi-icon">🎯</div>
+                                <div class="kpi-content">
+                                    <span class="kpi-value" id="sp-status">Low Risk</span>
+                                    <span class="kpi-label">Academic Status</span>
+                                </div>
+                                <div class="kpi-trend">Tracked Daily</div>
+                            </div>
+                        </div>
+
+                        <!-- Student Features Section: Progress, Recommendations, Upcoming Deadlines -->
+                        <div class="charts-grid" style="margin-top: 24px;">
+                            <!-- Feature 1: Course Breakdown & Attendance Graph -->
+                            <div class="chart-card">
+                                <h3 class="chart-title">📚 Course Attendance & Performance</h3>
+                                <canvas id="chart-student-performance" width="400" height="260"></canvas>
+                            </div>
+
+                            <!-- Feature 2: Personalized AI Study Recommendations -->
+                            <div class="chart-card">
+                                <h3 class="chart-title">💡 Personalized AI Study Plan</h3>
+                                <ul style="list-style:none; padding:0; margin-top:10px;" id="sp-recommendations">
+                                    <li style="padding:10px 14px; background:var(--bg-secondary); border-radius:8px; margin-bottom:8px;">
+                                        <strong>📖 Big Data Analytics (1-BDA):</strong> Maintain study streak. Focus on Hadoop Ecosystem modules.
+                                    </li>
+                                    <li style="padding:10px 14px; background:var(--bg-secondary); border-radius:8px; margin-bottom:8px;">
+                                        <strong>🤖 Machine Learning (2-ML):</strong> Outstanding performance! Review Ensemble Models for upcoming quiz.
+                                    </li>
+                                    <li style="padding:10px 14px; background:var(--bg-secondary); border-radius:8px;">
+                                        <strong>🌐 Web & AI Resources (3-WAIR):</strong> Attendance is at 82%. Complete pending lab submission to boost CGPA.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Feature 3: Academic Timeline & Assignment Tracker -->
+                        <div class="chart-card chart-full" style="margin-top: 24px;">
+                            <h3 class="chart-title">📋 Upcoming Assignments & Exam Schedule</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Task / Assessment</th>
+                                        <th>Due Date</th>
+                                        <th>Weightage</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>1-BDA</strong></td>
+                                        <td>Hadoop & Spark Lab Assignment</td>
+                                        <td>12th Oct 2026</td>
+                                        <td>15%</td>
+                                        <td><span class="risk-badge risk-low">Submitted</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>2-ML</strong></td>
+                                        <td>XGBoost Mid-Term Project</td>
+                                        <td>18th Oct 2026</td>
+                                        <td>25%</td>
+                                        <td><span class="risk-badge risk-medium">In Progress</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>3-WAIR</strong></td>
+                                        <td>Web Application API Integration</td>
+                                        <td>22nd Oct 2026</td>
+                                        <td>20%</td>
+                                        <td><span class="risk-badge risk-high">Pending</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </section>
                 </div>

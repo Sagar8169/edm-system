@@ -10,25 +10,26 @@
     --bg-card-hover: rgba(30, 30, 60, 0.8);
     --bg-elevated: rgba(25, 25, 55, 0.9);
     
-    --text-primary: #e8e8f0;
-    --text-secondary: #8888a8;
-    --text-muted: #555570;
-    --text-accent: #667eea;
+    --text-primary: #ffffff;
+    --text-secondary: #b0b3ce;
+    --text-muted: #8e92b8;
+    --text-accent: #8298fc;
 
-    --accent: #667eea;
-    --accent-2: #764ba2;
-    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --accent: #7b92ff;
+    --accent-2: #8f5bc6;
+    --accent-gradient: linear-gradient(135deg, #7b92ff 0%, #8f5bc6 100%);
     
     --success: #2ecc71;
-    --success-bg: rgba(46, 204, 113, 0.1);
-    --danger: #e74c3c;
-    --danger-bg: rgba(231, 76, 60, 0.1);
-    --warning: #f39c12;
-    --warning-bg: rgba(243, 156, 18, 0.1);
+    --success-bg: rgba(46, 204, 113, 0.18);
+    --danger: #ff5252;
+    --danger-bg: rgba(255, 82, 82, 0.18);
+    --warning: #ffb142;
+    --warning-bg: rgba(255, 177, 66, 0.18);
     --info: #3498db;
-    --info-bg: rgba(52, 152, 219, 0.1);
+    --info-bg: rgba(52, 152, 219, 0.18);
 
-    --border: rgba(255, 255, 255, 0.06);
+    --border: rgba(255, 255, 255, 0.12);
+    --border-hover: rgba(255, 255, 255, 0.25);
     --border-hover: rgba(255, 255, 255, 0.12);
     --glass: rgba(255, 255, 255, 0.03);
     --glass-border: rgba(255, 255, 255, 0.08);

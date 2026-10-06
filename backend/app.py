@@ -259,19 +259,55 @@ def build_student_records():
         df["risk_score"] = 0.5
         df["predicted_at_risk"] = df.get("at_risk", 0)
 
+    # Course code mapping dictionary: replace AAA/BBB/CCC/DDD/EEE/FFF/GGG with 1-BDA, 2-ML, 3-WAIR
+    course_mapping = {
+        "AAA": "1-BDA",
+        "BBB": "2-ML",
+        "CCC": "3-WAIR",
+        "DDD": "1-BDA",
+        "EEE": "2-ML",
+        "FFF": "3-WAIR",
+        "GGG": "1-BDA",
+    }
+    
+    # Pre-defined deterministic student names pool
+    first_names = ["Aarav", "Ananya", "Rohan", "Priya", "Aditya", "Neha", "Rahul", "Sneha", "Vikram", "Pooja", "Amit", "Kavya", "Siddharth", "Riya", "Gaurav", "Simran", "Deepak", "Ishita", "Mayank", "Shreya"]
+    last_names = ["Sharma", "Verma", "Gupta", "Singh", "Patel", "Kumar", "Mishra", "Joshi", "Shah", "Mehta", "Reddy", "Nair", "Deshmukh", "Chopra", "Malhotra"]
+
     # Build records list
     records = []
-    for _, row in df.iterrows():
+    for idx, row in df.iterrows():
+        sid = int(row.get("id_student", 0))
+        raw_mod = str(row.get("code_module", "?"))
+        mapped_module = course_mapping.get(raw_mod.upper(), f"1-BDA" if (sid % 3 == 0) else ("2-ML" if sid % 3 == 1 else "3-WAIR"))
+        
+        # Calculate realistic CGPA based on avg_score
+        avg_score = float(row.get("avg_score", 0))
+        cgpa = round(min(10.0, max(4.0, (avg_score / 10.0))), 2) if avg_score > 0 else round(6.5 + (sid % 35) / 10.0, 2)
+        
+        # Calculate realistic Overall Attendance based on days_active / total_clicks
+        days_active = float(row.get("days_active", 0))
+        attendance = round(min(98.0, max(45.0, 50.0 + (days_active * 1.5) + (sid % 15))), 1)
+
+        # Generate deterministic name from student ID
+        name_fn = first_names[sid % len(first_names)]
+        name_ln = last_names[(sid * 7) % len(last_names)]
+        student_name = f"{name_fn} {name_ln}"
+
         rec = {
-            "id": int(row.get("id_student", 0)),
-            "module": str(row.get("code_module", "?")),
+            "id": sid,
+            "name": student_name,
+            "module": mapped_module,
+            "rawModule": raw_mod,
             "presentation": str(row.get("code_presentation", "?")),
             "riskScore": float(row.get("risk_score", 0.5)),
             "atRisk": int(row.get("at_risk", 0)),
             "predictedAtRisk": int(row.get("predicted_at_risk", 0)),
+            "cgpa": cgpa,
+            "attendance": attendance,
             "totalClicks": float(row.get("total_clicks", 0)),
-            "avgScore": float(row.get("avg_score", 0)),
-            "daysActive": float(row.get("days_active", 0)),
+            "avgScore": avg_score,
+            "daysActive": days_active,
             "avgClicksPerDay": float(row.get("avg_clicks_per_day", 0)),
             "submissionsMissed": float(row.get("submissions_missed", 0)),
             "scoreStd": float(row.get("score_std", 0)),
