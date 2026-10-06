@@ -219,8 +219,7 @@ with col_left:
     st.dataframe(feature_table, width='stretch', height=400)
 
 with col_right:
-    st.markdown("### SHAP Explanation (Feature Impact)")
-    st.caption("**Full Form:** **SHapley Additive exPlanations** — Measures how much each feature pushes this student's risk prediction up or down.")
+    st.markdown("### Feature Impact (SHAP)")
 
     if shap_explainer is not None and len(available_features) == len(feature_cols):
         # Compute SHAP values for this student
@@ -246,8 +245,8 @@ with col_right:
         ))
 
         fig.update_layout(
-            title=f"Top 15 SHAP Contributions (Base: {shap_explainer.expected_value:.3f})",
-            xaxis_title="SHAP Value (SHapley Additive exPlanations: -> increases risk, <- decreases risk)",
+            title="Top 15 Feature Contributions",
+            xaxis_title="SHAP Value",
             height=500,
             plot_bgcolor="rgba(0,0,0,0)",
             margin=dict(l=20, r=80),

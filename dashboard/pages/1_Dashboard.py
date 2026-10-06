@@ -169,7 +169,6 @@ with col2:
 
 # --- Top Features ---
 st.markdown("### Top Feature Importance (SHAP)")
-st.info("**What is SHAP?**  \n**Full Form:** **SHapley Additive exPlanations**  \nSHAP measures the relative impact and strength of each student factor (e.g. active days, quiz scores, platform activity) in determining risk predictions.")
 
 importance_path = get_reports_dir() / "shap_feature_importance.csv"
 if importance_path.exists():
