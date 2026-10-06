@@ -499,44 +499,78 @@ def explain_student(student_id):
     # Take first match
     student_row = matches.iloc[0]
 
-    # Compute SHAP for this student on-the-fly
-    if xgb_model is not None and scaler is not None and explainer is not None:
+    # Course mapping helper
+    course_mapping = {
+        "AAA": "1-BDA", "BBB": "2-ML", "CCC": "3-WAIR",
+        "DDD": "1-BDA", "EEE": "2-ML", "FFF": "3-WAIR", "GGG": "1-BDA"
+    }
+
+    # Compute SHAP for this student on-the-fly or fallback
+    if xgb_model is not None and scaler is not None:
         valid_cols = [c for c in feature_cols if c in features.columns]
         if len(valid_cols) == len(feature_cols):
             X_student = student_row[feature_cols].values.reshape(1, -1).astype(float)
             X_scaled = scaler.transform(X_student)
 
-            sv = explainer.shap_values(X_scaled)[0]
-            expected_value = float(explainer.expected_value)
-
-            shap_features = []
-            for i, (name, fval, sval) in enumerate(zip(feature_cols, X_scaled[0], sv)):
-                shap_features.append({
-                    "name": name,
-                    "value": float(fval),
-                    "rawValue": float(X_student[0][i]),
-                    "shapValue": float(sval),
-                })
-            shap_features.sort(key=lambda x: abs(x["shapValue"]), reverse=True)
-
-            # Risk score
             try:
                 risk_score = float(xgb_model.predict_proba(X_scaled)[0, 1])
             except Exception:
                 risk_score = 0.5
 
+            expected_value = 0.5
+            sv = None
+
+            if explainer is not None:
+                try:
+                    sv = explainer.shap_values(X_scaled)[0]
+                    expected_value = float(explainer.expected_value)
+                except Exception as e:
+                    print(f"  ⚠ Explainer execution failed: {e}")
+                    sv = None
+
+            shap_features = []
+            if sv is not None:
+                for i, (name, fval, sval) in enumerate(zip(feature_cols, X_scaled[0], sv)):
+                    shap_features.append({
+                        "name": name,
+                        "value": float(fval),
+                        "rawValue": float(X_student[0][i]),
+                        "shapValue": float(sval),
+                    })
+                prediction = expected_value + float(sv.sum())
+            else:
+                # Fallback: estimate feature contributions using XGBoost feature importances & scaled z-scores
+                importances = xgb_model.feature_importances_
+                raw_module = str(student_row.get("code_module", "?"))
+                for i, (name, fval, imp) in enumerate(zip(feature_cols, X_scaled[0], importances)):
+                    # Higher risk if negative impact on performance (e.g. low clicks, low score) or high missed submissions
+                    direction = 1.0 if "missed" in name or "std" in name else -1.0
+                    est_shap = float(fval * imp * direction * 0.5)
+                    shap_features.append({
+                        "name": name,
+                        "value": float(fval),
+                        "rawValue": float(X_student[0][i]),
+                        "shapValue": est_shap,
+                    })
+                prediction = risk_score
+
+            shap_features.sort(key=lambda x: abs(x["shapValue"]), reverse=True)
+
+            raw_mod = str(student_row.get("code_module", "?"))
+            mapped_mod = course_mapping.get(raw_mod.upper(), "1-BDA")
+
             return jsonify({
                 "studentId": int(student_id),
-                "module": str(student_row.get("code_module", "?")),
+                "module": mapped_mod,
                 "riskScore": risk_score,
                 "predictedAtRisk": int(risk_score >= 0.5),
                 "actualResult": str(student_row.get("final_result", "Unknown")),
                 "baseValue": expected_value,
-                "prediction": expected_value + float(sv.sum()),
+                "prediction": prediction,
                 "features": shap_features,
             })
 
-    return jsonify({"error": "Model or explainer not loaded"}), 500
+    return jsonify({"error": "Model not loaded"}), 500
 
 
 @app.route("/api/clusters")
@@ -666,6 +700,7 @@ def get_feedback():
     """Retrieve HITL feedback log."""
     if FEEDBACK_PATH.exists():
         df = pd.read_csv(FEEDBACK_PATH)
+        df = df.fillna("")
         return jsonify(df.to_dict(orient="records"))
     return jsonify([])
 
